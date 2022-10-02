@@ -116,7 +116,7 @@ char    *ccMap(char(*f)(char),char *list, int len) {
 }
 
 // => Fiter
-res     *filterInt(bool(*f)(int),int *list,int len) {
+res *filterInt(bool(*f)(int),int *list,int len) {
     res *r = calloc(1,sizeof(res));
     int *tmp = calloc(len,sizeof(int));
     int tmpIdx = 0;
@@ -133,7 +133,7 @@ res     *filterInt(bool(*f)(int),int *list,int len) {
 }
 
 // => Take
-int *takeInt(int amount, int *list, int len) {
+int     *takeInt(int amount, int *list, int len) {
     if(amount > len) return NULL;
     int *p = calloc(amount,sizeof(int));
     if(p == NULL) return NULL;
@@ -143,7 +143,7 @@ int *takeInt(int amount, int *list, int len) {
     return p;
 }
 
-res *takeIntWhile(bool(*f)(int),int *list, int len) {
+res     *takeIntWhile(bool(*f)(int),int *list, int len) {
     /*
     *   Create new list with same size, since its not known how many elements will be in int
     */  
@@ -185,7 +185,6 @@ res *takeIntWhile(bool(*f)(int),int *list, int len) {
 
 
 // => Drop
-
 int     *dropInt(int amount, int *list, int len) {
     if(amount > len) return NULL;
     for(int i = 0; i < amount; i++) {
@@ -194,7 +193,7 @@ int     *dropInt(int amount, int *list, int len) {
     return list;
 }
 
-res *dropIntWhile(bool(*f)(int),int *list, int len) {
+res     *dropIntWhile(bool(*f)(int),int *list, int len) {
     int nl = 0;
     for(int i = 0; i < len; i++) {
         if(f(*list) == false) {
@@ -209,7 +208,7 @@ res *dropIntWhile(bool(*f)(int),int *list, int len) {
 }
 
 // => Gen
-int *intGen(int start, int stop) {
+int     *intGen(int start, int stop) {
     int *p = NULL;
     int index = 0;
     /*
@@ -237,11 +236,11 @@ int *intGen(int start, int stop) {
 
 
 // => find
-maybe *findInt(int value, int *list, int len) {
+maybe   *findInt(int value, int *list, int len) {
     maybe *m = calloc(1,sizeof(maybe));
     for(int i = 0; i < len; i++) {
         if(*list == value) {
-            m ->value = (void*) &list;
+            m ->value = (void*) list;
             return m;
         }
         *list++;

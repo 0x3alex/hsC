@@ -57,5 +57,13 @@ int main(void) {
     for(int i = 0; i < (d3 ->len); i++) {
         printf("%d\n",((int*)(d3->res))[i]);
     }
+
+    maybe *f1 = findInt(48,((int*)(d3->res)),d3->len);
+    puts("-----find 48 --------");
+    if(f1->value == NOTHING) {
+        puts("Value not found");
+    }else{
+        printf("%d\n",((int*)(f1->value))[0]);
+    }
     return 0;
 }
