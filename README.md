@@ -14,4 +14,4 @@ Includes
 
 ```maybe```-ish functionallity
 
-Generic functions may come in the future 
+There are no gernic functions to provide saftey while working whith those functions
