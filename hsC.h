@@ -9,52 +9,66 @@
 #include <stdio.h>
 #define NOTHING 0x0
 
-/*
-    * Struct for dropWhile and takeWhile to store length
-*/
+typedef enum {
+    INT = sizeof(int),
+    FLOAT = sizeof(float),
+    STRING = sizeof(char)
+} supportet_types;
 
 // => Structs
+    /*
+        * Struct is used for functions that return a new pointer
+        * user can get result list and length, since calulcating length of an pointer
+        * is not possible
+    */
 typedef struct {
     void *res;
     int len;
 } res;
 
+    /*
+        * Struct is used for functions that return either the value or nothing
+        * not really needed, since it could be done by an void pointer
+        * but its better for processing the values afterwards and clearness   
+    */
 typedef void* MaybeValue;
-
-
-
 typedef struct {
     MaybeValue value;
 } maybe;
 
 // => Mapping
-// -> Int to ...
-int         *iiMap(int(*f)(int), int *list, int len);
-float       *ifMap(float(*f)(int),int *list, int len);
+            //Map with function int to int
+int         *MapIntToInt(int(*f)(int), int *list, int len);
+            //Map with function int to float
+float       *MapIntToFloat(float(*f)(int),int *list, int len);
 
-// -> Char to ..
-char        *ccMap(char(*f)(char),char *list, int len);
+            //Map with function char to char
+char        *MapCharToChar(char(*f)(char),char *list, int len);
+
 
 
 // => Filter
-res     *iFilter(bool(*f)(int),int *list,int len);
+res     *filterInt(bool(*f)(int),int *list,int len);
 
 // => Take
-int     *iTake(int amount, int *list, int len);
-char    *sTake(int amount, char *list, int len);
-res     *sTakeWhile(bool(*f)(char),int *list, int len);
-res     *iTakeWhile(bool(*f)(int),int *list, int len);
+int     *takeInt(int amount, int *list, int len);
+char    *takeChar(int amount, char *list, int len);
+res     *takeCharWhile(bool(*f)(char),int *list, int len);
+res     *takeIntWhile(bool(*f)(int),int *list, int len);
 
 // => Drop
-res        *iDropWhile(bool(*f)(int),int *list, int len);
-res        *sDropWhile(bool(*f)(char),int *list, int len);
+int     *dropInt(int amount, int *list, int len);
+res     *dropIntWhile(bool(*f)(int),int *list, int len);
+res     *dropCharWhile(bool(*f)(char),int *list, int len);
 
 
 // => Gen
-int     *iGen(int start, int stop);
+int     *intGen(int start, int stop);
+char    *strGen(char start, char stop);
 
 // => Find
-maybe *iFind(int value, int *list, int len);
+maybe   *findInt(int value, int *list, int len);
+maybe   *findChar(char value, char *list, int len);
 
 
 #endif
@@ -66,8 +80,10 @@ maybe *iFind(int value, int *list, int len);
 #ifdef hsC_C
 
 // => Mapping
-// -> Int to ..
-int *iiMap(int(*f)(int), int* list, int len) {
+        /*
+            *Int to Int
+        */
+int     *MapIntToInt(int(*f)(int), int* list, int len) {
     int *t = calloc(len,sizeof(int));
     if(t == NULL) return NULL;
     for(int i = 0; i < len; i++) {
@@ -76,9 +92,21 @@ int *iiMap(int(*f)(int), int* list, int len) {
     return t;
 
 }
-
-// -> Char to ...
-char *ccMap(char(*f)(char),char *list, int len) {
+        /*
+            *Int to Float
+        */
+float   *MapIntToFloat(float(*f)(int),int *list, int len) {
+    float *t = calloc(len,sizeof(float));
+    if(t == NULL) return NULL;
+    for(int i = 0; i < len; i++) {
+        t[i] = f(list[i]);
+    }
+    return t;
+}
+        /*
+            *Char to char
+        */
+char    *ccMap(char(*f)(char),char *list, int len) {
     char *t = calloc(len,sizeof(char));
     if(t == NULL) return NULL;
     for(int i = 0; i < len; i++) {
@@ -88,10 +116,24 @@ char *ccMap(char(*f)(char),char *list, int len) {
 }
 
 // => Fiter
-
+res     *filterInt(bool(*f)(int),int *list,int len) {
+    res *r = calloc(1,sizeof(res));
+    int *tmp = calloc(len,sizeof(int));
+    int tmpIdx = 0;
+    for(int i = 0; i < len; i++) {
+        if(f(list[i]) == true) {
+            tmp[tmpIdx++] = list[i];
+        }
+    }
+    int *p = calloc(tmpIdx,sizeof(int));
+    memcpy(p,tmp,tmpIdx*sizeof(int));
+    r ->len = tmpIdx;
+    r ->res = (void*) p;
+    return r;
+}
 
 // => Take
-int *iTake(int amount, int *list, int len) {
+int *takeInt(int amount, int *list, int len) {
     if(amount > len) return NULL;
     int *p = calloc(amount,sizeof(int));
     if(p == NULL) return NULL;
@@ -101,7 +143,7 @@ int *iTake(int amount, int *list, int len) {
     return p;
 }
 
-res *iTakeWhile(bool(*f)(int),int *list, int len) {
+res *takeIntWhile(bool(*f)(int),int *list, int len) {
     /*
     *   Create new list with same size, since its not known how many elements will be in int
     */  
@@ -143,7 +185,16 @@ res *iTakeWhile(bool(*f)(int),int *list, int len) {
 
 
 // => Drop
-res *iDropWhile(bool(*f)(int),int *list, int len) {
+
+int     *dropInt(int amount, int *list, int len) {
+    if(amount > len) return NULL;
+    for(int i = 0; i < amount; i++) {
+        *list++;
+    }
+    return list;
+}
+
+res *dropIntWhile(bool(*f)(int),int *list, int len) {
     int nl = 0;
     for(int i = 0; i < len; i++) {
         if(f(*list) == false) {
@@ -158,7 +209,7 @@ res *iDropWhile(bool(*f)(int),int *list, int len) {
 }
 
 // => Gen
-int *iGen(int start, int stop) {
+int *intGen(int start, int stop) {
     int *p = NULL;
     int index = 0;
     /*
@@ -186,7 +237,7 @@ int *iGen(int start, int stop) {
 
 
 // => find
-maybe *iFind(int value, int *list, int len) {
+maybe *findInt(int value, int *list, int len) {
     maybe *m = calloc(1,sizeof(maybe));
     for(int i = 0; i < len; i++) {
         if(*list == value) {

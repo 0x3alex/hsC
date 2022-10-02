@@ -2,60 +2,60 @@
 #include "hsC.h"
 
 #include <stdio.h>
+#define INT_ARRAY_LENGHT 20
 
-
-int timeTwo(int a) {
-    return a*2;
+bool IsMod2(int a) {
+    return a % 2 == 0;
 }
 
-bool isLessThen10(int a) {
-    return a < 10;
+int times3(int a) {
+    return a*3;
 }
 
-bool isLessThen4(int a) {
-    return a < 4;
+bool lessThan30(int a) {
+    return a <= 30;
+}
+
+bool lessThan50(int a) {
+    return a <= 50;
 }
 
 int main(void) {
 
-    int len = 10;
-
-    puts ("iGen");
-    int *gen = iGen(0,len);
-    puts("iiMap");
-    int *n = iiMap(&timeTwo,gen,len);
-    for(int i = 0; i < len; i++) {
-        printf("%d\n",n[i]);
-    }
-    puts("iTake");
-    int *j = iTake(3,n,len);
-    for(int i = 0; i < 3; i++) {
-        printf("%d\n",j[i]);
-    }
-    puts("iTakeWhile");
-
-    res *k = iTakeWhile(&isLessThen10,n,len);
-    for(int i = 0; i < (k ->len); i++) {
-        printf("%d\n",((int*)(k->res))[i]);
+    int *list = intGen(1,INT_ARRAY_LENGHT);
+    puts("------------Inital list---------");
+    for(int i = 0; i < INT_ARRAY_LENGHT; i++) {
+        printf("%d\n",list[i]);
     }
 
-    puts("iDropWhile");
-    res *b = iDropWhile(&isLessThen4,n,len);
-    for(int i = 0; i < (b ->len); i++) {
-        printf("%d\n",((int*)(b->res))[i]);
+    res *mod2 = filterInt(&IsMod2,list,INT_ARRAY_LENGHT);
+    puts("--------Filtered if mod2-------");
+    for(int i = 0; i < mod2 ->len; i++) {
+        printf("%d\n",((int*)(mod2->res))[i]);
     }
 
-    puts("iFind");
-    maybe *a = iFind(20,gen,len);
-    if(a->value == NOTHING) {
-        puts("Value not found");
-    }else{
-        printf("%d\n", ((int*)(a->value)));
+    int *mp1 = MapIntToInt(&times3,((int*)(mod2->res)), mod2->len);
+    puts("--------Mappend times 3-------");
+    for(int i = 0; i < mod2 ->len; i++) {
+        printf("%d\n",mp1[i]);
     }
 
-    free(k);
-    free(j);
-    free(n);
+    int *d1 = dropInt(1,mp1,mod2->len);
+    puts("-----Dropped 1--------");
+    for(int i = 0; i < (mod2 ->len)-1; i++) {
+        printf("%d\n",d1[i]);
+    }
 
+    res *d2 = dropIntWhile(&lessThan30,d1,(mod2 ->len)-1);
+    puts("-----Dropped While <= 30 --------");
+    for(int i = 0; i < (d2 ->len); i++) {
+        printf("%d\n",((int*)(d2->res))[i]);
+    }
+
+    res *d3 = takeIntWhile(&lessThan50,((int*)(d2->res)),d2 ->len);
+    puts("-----take While <= 50 --------");
+    for(int i = 0; i < (d3 ->len); i++) {
+        printf("%d\n",((int*)(d3->res))[i]);
+    }
     return 0;
 }
