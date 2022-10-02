@@ -39,6 +39,15 @@ int *mapIntToInt(int(*f)(int), int* list, int len) {
 
 }
 
+int *takeInt(int amount, int *list, int len) {
+    if(amount > len) return NULL;
+    int p = calloc(amount,sizeof(int));
+    for(int i = 0; i < amount; i++) {
+        p[i] = list[i];
+    }
+    return p;
+}
+
 char *mapChar(char(*f)(char),char* list, int len) {
     int *t = calloc(len,sizeof(char));
     for(int i = 0; i < len; i++) {
