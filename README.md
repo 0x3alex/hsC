@@ -16,4 +16,4 @@ Includes
 
 ```maybe```-ish functionallity
 
-There are no gernic functions to provide saftey while working whith those functions
+There are no gernic functions to provide safety while working whith those functions
