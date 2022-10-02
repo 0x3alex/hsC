@@ -234,6 +234,31 @@ int     *intGen(int start, int stop) {
     
 }
 
+char    *strGen(char start, char stop) {
+    char *p = NULL;
+    int index = 0;
+    /*
+        *Gen descending list
+    */
+    if(stop < start) {
+        p = calloc((start-stop)+1,sizeof(char));
+        if (p == NULL) return NULL;
+        for( ; start >= stop ;) {
+            p[index++] = start--;
+        }
+    }
+
+    /*
+        *Gen ascending list
+    */
+    p = calloc((stop-start)+1,sizeof(char));
+    if (p == NULL) return NULL;
+    for( ; start <= stop ; ) {
+        p[index++] = start++;
+    }
+    return p;
+}
+
 
 // => find
 maybe   *findInt(int value, int *list, int len) {
