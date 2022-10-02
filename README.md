@@ -13,3 +13,5 @@ Includes
 ```find``` for Int, Floaty Char Arrays
 
 ```maybe```-ish functionallity
+
+Generic functions may come in the future 
