@@ -36,7 +36,7 @@ typedef struct {
 } maybe;
 
 /*
-    * Every data type has its own functions, since i find it safer to operate with type specific functions
+    * Every data type has its own functions, since i think its safer to operate with type specific functions
 */
 
 // => Mapping
