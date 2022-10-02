@@ -7,31 +7,54 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+#define NOTHING 0x0
 
 /*
     * Struct for dropWhile and takeWhile to store length
 */
 
+// => Structs
 typedef struct {
     void *res;
     int len;
 } res;
 
-/*
-    * No general typed functions for saftey
-*/
-int     *iiMap(int(*f)(int), int *list, int len);
-int     *iTake(int amount, int *list, int len);
-res     *iTakeWhile(bool(*f)(int),int *list, int len);
-res     *iDropWhile(bool(*f)(int),int *list, int len);
-int     *iGen(int start, int stop);
-int     *iGenFilter(int start, int stop, bool(*f)(int));
+typedef void* MaybeValue;
 
 
+
+typedef struct {
+    MaybeValue value;
+} maybe;
+
+// => Mapping
+// -> Int to ...
+int         *iiMap(int(*f)(int), int *list, int len);
+float       *ifMap(float(*f)(int),int *list, int len);
+
+// -> Char to ..
 char        *ccMap(char(*f)(char),char *list, int len);
-char        *takeChar(int amount, char *list, int len);
-char        *takeWhileChar(bool(*f)(char),int *list, int len);
-char        *dropWhileChar(bool(*f)(char),int *list, int len);
+
+
+// => Filter
+res     *iFilter(bool(*f)(int),int *list,int len);
+
+// => Take
+int     *iTake(int amount, int *list, int len);
+char    *sTake(int amount, char *list, int len);
+res     *sTakeWhile(bool(*f)(char),int *list, int len);
+res     *iTakeWhile(bool(*f)(int),int *list, int len);
+
+// => Drop
+res        *iDropWhile(bool(*f)(int),int *list, int len);
+res        *sDropWhile(bool(*f)(char),int *list, int len);
+
+
+// => Gen
+int     *iGen(int start, int stop);
+
+// => Find
+maybe *iFind(int value, int *list, int len);
 
 
 #endif
@@ -42,8 +65,8 @@ char        *dropWhileChar(bool(*f)(char),int *list, int len);
 
 #ifdef hsC_C
 
-/* Int */
-
+// => Mapping
+// -> Int to ..
 int *iiMap(int(*f)(int), int* list, int len) {
     int *t = calloc(len,sizeof(int));
     if(t == NULL) return NULL;
@@ -54,6 +77,20 @@ int *iiMap(int(*f)(int), int* list, int len) {
 
 }
 
+// -> Char to ...
+char *ccMap(char(*f)(char),char *list, int len) {
+    char *t = calloc(len,sizeof(char));
+    if(t == NULL) return NULL;
+    for(int i = 0; i < len; i++) {
+        t[i] = f(list[i]);
+    }
+    return t;
+}
+
+// => Fiter
+
+
+// => Take
 int *iTake(int amount, int *list, int len) {
     if(amount > len) return NULL;
     int *p = calloc(amount,sizeof(int));
@@ -104,6 +141,23 @@ res *iTakeWhile(bool(*f)(int),int *list, int len) {
     return re;
 }
 
+
+// => Drop
+res *iDropWhile(bool(*f)(int),int *list, int len) {
+    int nl = 0;
+    for(int i = 0; i < len; i++) {
+        if(f(*list) == false) {
+            break;
+        }
+        *list++;
+        nl++;
+    }
+    res *re =  calloc(1,sizeof(res));
+    re ->len = nl;
+    re ->res = list;
+}
+
+// => Gen
 int *iGen(int start, int stop) {
     int *p = NULL;
     int index = 0;
@@ -131,15 +185,20 @@ int *iGen(int start, int stop) {
 }
 
 
-/* String */
-
-char *ccMap(char(*f)(char),char *list, int len) {
-    char *t = calloc(len,sizeof(char));
-    if(t == NULL) return NULL;
+// => find
+maybe *iFind(int value, int *list, int len) {
+    maybe *m = calloc(1,sizeof(maybe));
     for(int i = 0; i < len; i++) {
-        t[i] = f(list[i]);
+        if(*list == value) {
+            m ->value = (void*) &list;
+            return m;
+        }
+        *list++;
     }
-    return t;
+    m ->value = NOTHING;
+    return m;
 }
+
+
 
 #endif

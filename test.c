@@ -12,12 +12,18 @@ bool isLessThen10(int a) {
     return a < 10;
 }
 
+bool isLessThen4(int a) {
+    return a < 4;
+}
+
 int main(void) {
 
     int len = 10;
 
+    puts ("iGen");
+    int *gen = iGen(0,len);
     puts("iiMap");
-    int *n = iiMap(&timeTwo,iGen(0,len),len);
+    int *n = iiMap(&timeTwo,gen,len);
     for(int i = 0; i < len; i++) {
         printf("%d\n",n[i]);
     }
@@ -32,6 +38,21 @@ int main(void) {
     for(int i = 0; i < (k ->len); i++) {
         printf("%d\n",((int*)(k->res))[i]);
     }
+
+    puts("iDropWhile");
+    res *b = iDropWhile(&isLessThen4,n,len);
+    for(int i = 0; i < (b ->len); i++) {
+        printf("%d\n",((int*)(b->res))[i]);
+    }
+
+    puts("iFind");
+    maybe *a = iFind(20,gen,len);
+    if(a->value == NOTHING) {
+        puts("Value not found");
+    }else{
+        printf("%d\n", ((int*)(a->value)));
+    }
+
     free(k);
     free(j);
     free(n);
