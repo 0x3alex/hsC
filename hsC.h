@@ -41,14 +41,23 @@ typedef struct {
 int         *MapIntToInt(int(*f)(int), int *list, int len);
             //Map with function int to float
 float       *MapIntToFloat(float(*f)(int),int *list, int len);
-
+            //Map with function int to bool
+bool        *MapIntToBool(bool(*f)(int),int *list, int len);
+            //Map with function int to char
+char        *MapIntToChar(char(*f)(int),int *list, int len);
             //Map with function char to char
 char        *MapCharToChar(char(*f)(char),char *list, int len);
+            //Map with function char to bool
+bool        *MapCharToBool(bool(*f)(char),char *list, int len);
+            //Map with function char to int
+int         *MapCharToInt(int(*f)(char),char *list, int len);
+
 
 
 
 // => Filter
 res     *filterInt(bool(*f)(int),int *list,int len);
+res     *filterChar(bool(*f)(char),char *list,int len);
 
 // => Take
 int     *takeInt(int amount, int *list, int len);
@@ -59,6 +68,8 @@ res     *takeIntWhile(bool(*f)(int),int *list, int len);
 // => Drop
 int     *dropInt(int amount, int *list, int len);
 res     *dropIntWhile(bool(*f)(int),int *list, int len);
+
+char    *dropChar(int amount, char *list, int len);
 res     *dropCharWhile(bool(*f)(char),int *list, int len);
 
 
@@ -103,11 +114,53 @@ float   *MapIntToFloat(float(*f)(int),int *list, int len) {
     }
     return t;
 }
+
+        /*
+            *Int to bool
+        */
+bool    *MapIntToBool(bool(*f)(int),int *list, int len) {
+    bool *t = calloc(len,sizeof(bool));
+    if(t == NULL) return NULL;
+    for(int i = 0; i < len; i++) {
+        t[i] = f(list[i]);
+    }
+    return t;
+}
+
+char        *MapIntToChar(char(*f)(int),int *list, int len) {
+    char *t = calloc(len,sizeof(char));
+    if(t == NULL) return NULL;
+    for(int i = 0; i < len; i++) {
+        t[i] = f(list[i]);
+    }
+    return t;
+}
+
         /*
             *Char to char
         */
-char    *ccMap(char(*f)(char),char *list, int len) {
+char    *MapCharToChar(char(*f)(char),char *list, int len) {
     char *t = calloc(len,sizeof(char));
+    if(t == NULL) return NULL;
+    for(int i = 0; i < len; i++) {
+        t[i] = f(list[i]);
+    }
+    return t;
+}
+
+int         *MapCharToInt(int(*f)(char),char *list, int len) {
+    int *t = calloc(len,sizeof(int));
+    if(t == NULL) return NULL;
+    for(int i = 0; i < len; i++) {
+        t[i] = f(list[i]);
+    }
+    return t;
+}
+        /*
+            *Char to bool
+        */
+bool    *MapCharToBool(bool(*f)(char),char *list, int len) {
+    bool *t = calloc(len,sizeof(bool));
     if(t == NULL) return NULL;
     for(int i = 0; i < len; i++) {
         t[i] = f(list[i]);
