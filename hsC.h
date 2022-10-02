@@ -153,6 +153,7 @@ res *filterInt(bool(*f)(int),int *list,int len) {
     if(list == NULL) return NULL; 
     res *r = calloc(1,sizeof(res));
     int *tmp = calloc(len,sizeof(int));
+    if(tmp == NULL) return NULL;
     int tmpIdx = 0;
     for(int i = 0; i < len; i++) {
         if(f(list[i]) == true) {
@@ -160,7 +161,29 @@ res *filterInt(bool(*f)(int),int *list,int len) {
         }
     }
     int *p = calloc(tmpIdx,sizeof(int));
+    if(p == NULL) return NULL;
     memcpy(p,tmp,tmpIdx*sizeof(int));
+    free(tmp);
+    r ->len = tmpIdx;
+    r ->res = (void*) p;
+    return r;
+}
+
+res *filterChar(bool(*f)(char),char *list,int len) {
+    if(list == NULL) return NULL; 
+    res *r = calloc(1,sizeof(res));
+    char *tmp = calloc(len,sizeof(char));
+    if(tmp == NULL) return NULL;
+    int tmpIdx = 0;
+    for(int i = 0; i < len; i++) {
+        if(f(list[i]) == true) {
+            tmp[tmpIdx++] = list[i];
+        }
+    }
+    char *p = calloc(tmpIdx,sizeof(char));
+    if(p == NULL) return NULL;
+    memcpy(p,tmp,tmpIdx*sizeof(char));
+    free(tmp);
     r ->len = tmpIdx;
     r ->res = (void*) p;
     return r;
