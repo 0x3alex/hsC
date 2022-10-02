@@ -31,7 +31,7 @@ int main(void) {
     char *l = strGen('A','Z');
     int *l1 = MapCharToInt(&charToInt,l,(95-65));
     int *l2 = MapIntToInt(&tolower,l1,(95-65));
-
+    
     for(int i = 0; i < (95-65); i++) {
         printf("%c\n",l2[i]);
     }

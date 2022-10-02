@@ -6,7 +6,6 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdio.h>
 #define NOTHING 0x0
 
 typedef enum {
@@ -36,11 +35,13 @@ typedef struct {
     MaybeValue value;
 } maybe;
 
+/*
+    * Every data type has its own functions, since i find it safer to operate with type specific functions
+*/
+
 // => Mapping
             //Map with function int to int
 int         *MapIntToInt(int(*f)(int), int *list, int len);
-            //Map with function int to float
-float       *MapIntToFloat(float(*f)(int),int *list, int len);
             //Map with function int to bool
 bool        *MapIntToBool(bool(*f)(int),int *list, int len);
             //Map with function int to char
@@ -52,9 +53,6 @@ bool        *MapCharToBool(bool(*f)(char),char *list, int len);
             //Map with function char to int
 int         *MapCharToInt(int(*f)(char),char *list, int len);
 
-
-
-
 // => Filter
 res     *filterInt(bool(*f)(int),int *list,int len);
 res     *filterChar(bool(*f)(char),char *list,int len);
@@ -62,15 +60,14 @@ res     *filterChar(bool(*f)(char),char *list,int len);
 // => Take
 int     *takeInt(int amount, int *list, int len);
 char    *takeChar(int amount, char *list, int len);
-res     *takeCharWhile(bool(*f)(char),int *list, int len);
+res     *takeCharWhile(bool(*f)(char),char *list, int len);
 res     *takeIntWhile(bool(*f)(int),int *list, int len);
 
 // => Drop
 int     *dropInt(int amount, int *list, int len);
 res     *dropIntWhile(bool(*f)(int),int *list, int len);
-
 char    *dropChar(int amount, char *list, int len);
-res     *dropCharWhile(bool(*f)(char),int *list, int len);
+res     *dropCharWhile(bool(*f)(char),char *list, int len);
 
 
 // => Gen
@@ -91,10 +88,8 @@ maybe   *findChar(char value, char *list, int len);
 #ifdef hsC_C
 
 // => Mapping
-        /*
-            *Int to Int
-        */
-int     *MapIntToInt(int(*f)(int), int* list, int len) {
+int *MapIntToInt(int(*f)(int), int* list, int len) {
+    if(list == NULL) return NULL; 
     int *t = calloc(len,sizeof(int));
     if(t == NULL) return NULL;
     for(int i = 0; i < len; i++) {
@@ -103,22 +98,8 @@ int     *MapIntToInt(int(*f)(int), int* list, int len) {
     return t;
 
 }
-        /*
-            *Int to Float
-        */
-float   *MapIntToFloat(float(*f)(int),int *list, int len) {
-    float *t = calloc(len,sizeof(float));
-    if(t == NULL) return NULL;
-    for(int i = 0; i < len; i++) {
-        t[i] = f(list[i]);
-    }
-    return t;
-}
-
-        /*
-            *Int to bool
-        */
-bool    *MapIntToBool(bool(*f)(int),int *list, int len) {
+bool *MapIntToBool(bool(*f)(int),int *list, int len) {
+    if(list == NULL) return NULL; 
     bool *t = calloc(len,sizeof(bool));
     if(t == NULL) return NULL;
     for(int i = 0; i < len; i++) {
@@ -127,7 +108,8 @@ bool    *MapIntToBool(bool(*f)(int),int *list, int len) {
     return t;
 }
 
-char        *MapIntToChar(char(*f)(int),int *list, int len) {
+char *MapIntToChar(char(*f)(int),int *list, int len) {
+    if(list == NULL) return NULL; 
     char *t = calloc(len,sizeof(char));
     if(t == NULL) return NULL;
     for(int i = 0; i < len; i++) {
@@ -136,10 +118,8 @@ char        *MapIntToChar(char(*f)(int),int *list, int len) {
     return t;
 }
 
-        /*
-            *Char to char
-        */
-char    *MapCharToChar(char(*f)(char),char *list, int len) {
+char *MapCharToChar(char(*f)(char),char *list, int len) {
+    if(list == NULL) return NULL; 
     char *t = calloc(len,sizeof(char));
     if(t == NULL) return NULL;
     for(int i = 0; i < len; i++) {
@@ -148,7 +128,8 @@ char    *MapCharToChar(char(*f)(char),char *list, int len) {
     return t;
 }
 
-int         *MapCharToInt(int(*f)(char),char *list, int len) {
+int *MapCharToInt(int(*f)(char),char *list, int len) {
+    if(list == NULL) return NULL; 
     int *t = calloc(len,sizeof(int));
     if(t == NULL) return NULL;
     for(int i = 0; i < len; i++) {
@@ -156,10 +137,9 @@ int         *MapCharToInt(int(*f)(char),char *list, int len) {
     }
     return t;
 }
-        /*
-            *Char to bool
-        */
-bool    *MapCharToBool(bool(*f)(char),char *list, int len) {
+
+bool *MapCharToBool(bool(*f)(char),char *list, int len) {
+    if(list == NULL) return NULL; 
     bool *t = calloc(len,sizeof(bool));
     if(t == NULL) return NULL;
     for(int i = 0; i < len; i++) {
@@ -170,6 +150,7 @@ bool    *MapCharToBool(bool(*f)(char),char *list, int len) {
 
 // => Fiter
 res *filterInt(bool(*f)(int),int *list,int len) {
+    if(list == NULL) return NULL; 
     res *r = calloc(1,sizeof(res));
     int *tmp = calloc(len,sizeof(int));
     int tmpIdx = 0;
@@ -186,7 +167,8 @@ res *filterInt(bool(*f)(int),int *list,int len) {
 }
 
 // => Take
-int     *takeInt(int amount, int *list, int len) {
+int *takeInt(int amount, int *list, int len) {
+    if(list == NULL) return NULL; 
     if(amount > len) return NULL;
     int *p = calloc(amount,sizeof(int));
     if(p == NULL) return NULL;
@@ -196,17 +178,22 @@ int     *takeInt(int amount, int *list, int len) {
     return p;
 }
 
-res     *takeIntWhile(bool(*f)(int),int *list, int len) {
-    /*
-    *   Create new list with same size, since its not known how many elements will be in int
-    */  
+char *takeChar(int amount, char *list, int len) {
+    if(list == NULL) return NULL; 
+    if(amount > len) return NULL;
+    char *p = calloc(amount,sizeof(char));
+    if(p == NULL) return NULL;
+    for(int i = 0; i < amount; i++) {
+        p[i] = list[i];
+    }
+    return p;
+}
+
+res *takeIntWhile(bool(*f)(int),int *list, int len) { 
+    if(list == NULL) return NULL; 
     int *tmp = calloc(len,sizeof(int));
     if(tmp == NULL) return NULL;
     int i = 0;
-
-    /*
-    *   Copy until false result is reached
-    */
     for(; i <= len; i++) {
         if(f(list[i]) == true) {
             
@@ -215,21 +202,31 @@ res     *takeIntWhile(bool(*f)(int),int *list, int len) {
         }
         break;  
     }
-
-    /*
-    *   create new list with exact needed length
-    */
     int *r = calloc(i,sizeof(int));
-
-    /*
-    *   Copy the results
-    */
     memcpy(r,tmp,i*sizeof(int));
     free(tmp);
+    res *re = calloc(1,sizeof(res));
+    re ->res = (void*) r;
+    re ->len = i;
+    return re;
+}
 
-    /*
-    *   To provide the length return a struct, which contains length and result
-    */
+res *takeCharWhile(bool(*f)(char),char *list, int len) { 
+    if(list == NULL) return NULL; 
+    char *tmp = calloc(len,sizeof(char));
+    if(tmp == NULL) return NULL;
+    int i = 0;
+    for(; i <= len; i++) {
+        if(f(list[i]) == true) {
+            
+            tmp[i] = list[i];
+            continue;
+        }
+        break;  
+    }
+    char *r = calloc(i,sizeof(char));
+    memcpy(r,tmp,i*sizeof(char));
+    free(tmp);
     res *re = calloc(1,sizeof(res));
     re ->res = (void*) r;
     re ->len = i;
@@ -238,7 +235,8 @@ res     *takeIntWhile(bool(*f)(int),int *list, int len) {
 
 
 // => Drop
-int     *dropInt(int amount, int *list, int len) {
+int *dropInt(int amount, int *list, int len) {
+    if(list == NULL) return NULL; 
     if(amount > len) return NULL;
     for(int i = 0; i < amount; i++) {
         *list++;
@@ -246,7 +244,33 @@ int     *dropInt(int amount, int *list, int len) {
     return list;
 }
 
-res     *dropIntWhile(bool(*f)(int),int *list, int len) {
+char *dropChar(int amount, char *list, int len) {
+    if(list == NULL) return NULL; 
+    if(amount > len) return NULL;
+    for(int i = 0; i < amount; i++) {
+        *list++;
+    }
+    return list;
+}
+
+
+res *dropIntWhile(bool(*f)(int),int *list, int len) {
+    if(list == NULL) return NULL; 
+    int nl = 0;
+    for(int i = 0; i < len; i++) {
+        if(f(*list) == false) {
+            break;
+        }
+        *list++;
+        nl++;
+    }
+    res *re =  calloc(1,sizeof(res));
+    re ->len = nl;
+    re ->res = list;
+}
+
+res *dropCharWhile(bool(*f)(char),char *list, int len) {
+    if(list == NULL) return NULL; 
     int nl = 0;
     for(int i = 0; i < len; i++) {
         if(f(*list) == false) {
@@ -261,12 +285,9 @@ res     *dropIntWhile(bool(*f)(int),int *list, int len) {
 }
 
 // => Gen
-int     *intGen(int start, int stop) {
+int *intGen(int start, int stop) {
     int *p = NULL;
     int index = 0;
-    /*
-        *Gen descending list
-    */
     if(stop < start) {
         p = calloc((start-stop)+1,sizeof(int));
         if (p == NULL) return NULL;
@@ -274,10 +295,6 @@ int     *intGen(int start, int stop) {
             p[index++] = start--;
         }
     }
-
-    /*
-        *Gen ascending list
-    */
     p = calloc((stop-start)+1,sizeof(int));
     if (p == NULL) return NULL;
     for( ; start <= stop ; ) {
@@ -287,12 +304,9 @@ int     *intGen(int start, int stop) {
     
 }
 
-char    *strGen(char start, char stop) {
+char *strGen(char start, char stop) {
     char *p = NULL;
     int index = 0;
-    /*
-        *Gen descending list
-    */
     if(stop < start) {
         p = calloc((start-stop)+1,sizeof(char));
         if (p == NULL) return NULL;
@@ -300,10 +314,6 @@ char    *strGen(char start, char stop) {
             p[index++] = start--;
         }
     }
-
-    /*
-        *Gen ascending list
-    */
     p = calloc((stop-start)+1,sizeof(char));
     if (p == NULL) return NULL;
     for( ; start <= stop ; ) {
@@ -314,7 +324,22 @@ char    *strGen(char start, char stop) {
 
 
 // => find
-maybe   *findInt(int value, int *list, int len) {
+maybe *findInt(int value, int *list, int len) {
+    if(list == NULL) return NULL; 
+    maybe *m = calloc(1,sizeof(maybe));
+    for(int i = 0; i < len; i++) {
+        if(*list == value) {
+            m ->value = (void*) list;
+            return m;
+        }
+        *list++;
+    }
+    m ->value = NOTHING;
+    return m;
+}
+
+maybe *findChar(char value, char *list, int len) {
+    if(list == NULL) return NULL; 
     maybe *m = calloc(1,sizeof(maybe));
     for(int i = 0; i < len; i++) {
         if(*list == value) {
