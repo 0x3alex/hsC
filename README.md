@@ -2,18 +2,16 @@
 
 Some convenient functions, that i used in Haskell and wanted to have in C.
 
-I created this for my own usage, so exuse the lack of comments and the "not clean" code.
-
 Includes
 
-```map``` for Int and Char Arrays
+```map```
 
-```filter``` for Int and Char Arrays
+```filter```
 
-```take/drop``` for Int and Char Arrays
+```drop & dropWhile```
 
-```find``` for Int Char Arrays
+```take & takeWhile```
 
-```maybe```-ish functionallity
+```find```
 
-There are no gernic functions to provide safety while working whith those functions
+everything is written in generic macros!
