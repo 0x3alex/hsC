@@ -211,6 +211,14 @@ typedef struct {
         out = p; \
     }
 
+/*
+    * Val is the value to seach for
+    * list is the list to search in
+    * length is the length of the list
+    * type is the type of the list
+    * maybe_struct is the res struct
+    [ ! ] - If value is found, value in maybe_struct is the value. If not, value in maybe_struct is NOTHING
+*/
 #define find(val,list,length,type,maybe_struct) \
     type *p = calloc(1,sizeof(maybe));\
     if(list != NULL) { \
