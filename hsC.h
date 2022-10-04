@@ -1,18 +1,9 @@
-/*
-    *HEADER
-*/
 #ifndef hsC_H
 #define hsC_H
 #include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
 #define NOTHING 0x0
-
-typedef enum {
-    INT = sizeof(int),
-    FLOAT = sizeof(float),
-    STRING = sizeof(char)
-} supportet_types;
 
 // => Structs
     /*
@@ -35,346 +26,205 @@ typedef struct {
     MaybeValue value;
 } maybe;
 
-/*
-    * Every data type has its own functions, since i think its safer to operate with type specific functions
-*/
-
-// => Mapping
-            //Map with function int to int
-int         *MapIntToInt(int(*f)(int), int *list, int len);
-            //Map with function int to bool
-bool        *MapIntToBool(bool(*f)(int),int *list, int len);
-            //Map with function int to char
-char        *MapIntToChar(char(*f)(int),int *list, int len);
-            //Map with function char to char
-char        *MapCharToChar(char(*f)(char),char *list, int len);
-            //Map with function char to bool
-bool        *MapCharToBool(bool(*f)(char),char *list, int len);
-            //Map with function char to int
-int         *MapCharToInt(int(*f)(char),char *list, int len);
-
-// => Filter
-res     *filterInt(bool(*f)(int),int *list,int len);
-res     *filterChar(bool(*f)(char),char *list,int len);
-
-// => Take
-int     *takeInt(int amount, int *list, int len);
-char    *takeChar(int amount, char *list, int len);
-res     *takeCharWhile(bool(*f)(char),char *list, int len);
-res     *takeIntWhile(bool(*f)(int),int *list, int len);
-
-// => Drop
-int     *dropInt(int amount, int *list, int len);
-res     *dropIntWhile(bool(*f)(int),int *list, int len);
-char    *dropChar(int amount, char *list, int len);
-res     *dropCharWhile(bool(*f)(char),char *list, int len);
-
-
-// => Gen
-int     *intGen(int start, int stop);
-char    *strGen(char start, char stop);
-
-// => Find
-maybe   *findInt(int value, int *list, int len);
-maybe   *findChar(char value, char *list, int len);
-
-
-#endif
 
 /*
-    *IMPLEMENTATION
+    * Func is the function that is going to be mapped, it does not need to be passed int with a &
+        * The func should take the datatype of the list as input and return the datatype of "out"
+            * f.E list is type char* and out is type int* then the function would be -> int(*f)(char)    
+    * List is the list that is going to be mapped over
+    * Length is the length of the list
+    * type is the output type of "out"
+    * "out" is the output list and should be initialized to NULL
 */
+#define map(func,list,length,typ,out)  \
+    if(list != NULL) {\
+        typ *t = calloc(length,sizeof(typ)); \
+        if(t != NULL) { \
+            for(int i = 0; i < length; i++) { \
+                t[i] = func(list[i]); \
+            } \
+            out = t; \
+        }else{out = NULL;} \
+    }else{out = NULL;}
 
-#ifdef hsC_C
 
-// => Mapping
-int *MapIntToInt(int(*f)(int), int* list, int len) {
-    if(list == NULL) return NULL; 
-    int *t = calloc(len,sizeof(int));
-    if(t == NULL) return NULL;
-    for(int i = 0; i < len; i++) {
-        t[i] = f(list[i]);
+
+/*
+    * Func is the function that is going to be used as the filter
+        * should take in the type of the list and return bool!
+    * list ist the list
+    * len is the length of the list
+    * type is the type of the list
+        *type needs to be the same type as list    
+    * res is an res struct (defined above) initialized to null
+        * res should be a pointer
+*/
+#define filter(func,list,length,type,res_struct) \
+    res *r = calloc(1,sizeof(res)); \
+    type *tmp = calloc(length,sizeof(type));\
+    if(tmp != NULL) { \
+        int tidx = 0; \
+        for(int i = 0; i < length; i++) {\
+            if(func(list[i]) == true) {\
+                tmp[tidx++] = list[i];\
+            } \
+        } \
+        int *p = calloc(tidx,sizeof(type)); \
+        if(p != NULL) { \
+            memcpy(p,tmp,tidx*sizeof(type)); \
+            free(tmp); \
+            r -> len = tidx; \
+            r -> res = (void*) p; \
+            res_struct = r; \
+        }else{ \
+            r -> len = 0; \
+            r -> res = NULL;\
+            res_struct = r; \
+        } \
+    }else{ \
+        r -> len = 0; \
+        r -> res = NULL; \
+        res_struct = r; \
+    } 
+
+/* 
+    * Amount is the amount to be taken from the list
+    * List is the list that should be taken from
+    * length is the length of the list
+    * type is the type of the output list
+        * input and output list should have the same type
+    * out is the output list and should have the same type as type and list and is initialized to null
+*/
+#define take(amount, list, length, type, out) \
+    if(list != NULL && amount <= length) { \
+        type *p = calloc(amount,sizeof(type)); \
+        if(p != NULL) { \
+            for(int i = 0; i < amount; i++) { \
+                p[i] = list[i]; \
+            } \
+            out = p; \
+        } else { out = NULL ;} \
+    } else { out = NULL; }
+
+
+/*
+    *func is the function that checks if the current values in the list fit
+        * should take in the type of list and return bool
+    * length is the length of the list
+    * type is the type of the list
+    * res_struct is the res struct (defined above) initialized to NULL
+*/
+#define takeWhile(func,list,length,type,res_struct) \
+    if(list != NULL) { \
+        type *tmp = calloc(length,sizeof(type)); \
+        int idx = 0; \
+        for(int i = 0; i < length; i++) { \
+            if(func(list[i]) == true) { \
+                tmp[idx++] = list[i]; \
+                continue; \
+            } \
+            break; \
+        } \
+        type *p = calloc(idx,sizeof(type)); \
+        memcpy(p,tmp,idx*sizeof(type)); \
+        free(tmp); \
+        res *r = calloc(1,sizeof(res)); \
+        r -> len = idx; \
+        r -> res = (void*) p; \
+        res_struct = r; \
     }
-    return t;
 
-}
-bool *MapIntToBool(bool(*f)(int),int *list, int len) {
-    if(list == NULL) return NULL; 
-    bool *t = calloc(len,sizeof(bool));
-    if(t == NULL) return NULL;
-    for(int i = 0; i < len; i++) {
-        t[i] = f(list[i]);
+/* 
+    * Amount is the amount to be dropped from the list
+    * List is the list that should be dropped from
+    * length is the length of the list
+    * type is the type of the output list
+        * input and output list should have the same type
+    * out is the output list and should have the same type as type and list and is initialized to null
+*/
+#define drop(amount, list, length, type, out) \
+    if(list != NULL && amount <= length) { \
+        for(int i = 0; i < amount; i++) { \
+            *list++; \
+        } \
+        out = list; \
+    } else {out = NULL;} \
+
+/*
+    *func is the function that checks if the current values in the list fit
+        * should take in the type of list and return bool
+    * length is the length of the list
+    * type is the type of the list
+    * res_struct is the res struct (defined above) initialized to NULL
+*/
+#define dropWhile(func,list,length,type,res_struct) \
+    if(list != NULL) { \
+        int idx = 0; \
+        for(int i = 0; i < length; i++) { \
+            if(func(*list) == false) { \
+                break; \
+            } \
+            idx++; \
+            *list++;\
+        }\
+        res *r = calloc(1,sizeof(res)); \
+        r -> len = idx; \
+        r -> res = list;\
+        res_struct = r; \
+    } else{res_struct = NULL;}
+
+
+/*
+    * sta is the start value
+    * sto is the stop value
+    * type is the type of the values
+    * step is the step width
+*/
+#define gen(sta,sto,type,step,out) \
+    if(sto < sta) { \
+        type *p = NULL; \
+        type start = sta; \
+        type stop = sto; \
+        int i = 0; \
+        p = calloc((start-stop)+1,sizeof(type)); \
+        if(p != NULL) { \
+            while(start >= stop) { \
+                if(start % step == 0) { \
+                    p[i++] = start--;\
+                }else{start--;} \
+            }\
+            out = p;\
+        }else{out = NULL;} \
+    }else{ \
+        type *p = NULL; \
+        type start = sta; \
+        type stop = sto; \
+        int i = 0; \
+        p = calloc((stop-start)+1,sizeof(type));\
+        if(p != NULL) {\
+            while(start <= stop) {\
+                if(start % step == 0) { \
+                    p[i++] = start++;\
+                }else{start++;} \
+            }\
+        }else{out = NULL;}\
+        out = p; \
     }
-    return t;
-}
 
-char *MapIntToChar(char(*f)(int),int *list, int len) {
-    if(list == NULL) return NULL; 
-    char *t = calloc(len,sizeof(char));
-    if(t == NULL) return NULL;
-    for(int i = 0; i < len; i++) {
-        t[i] = f(list[i]);
-    }
-    return t;
-}
-
-char *MapCharToChar(char(*f)(char),char *list, int len) {
-    if(list == NULL) return NULL; 
-    char *t = calloc(len,sizeof(char));
-    if(t == NULL) return NULL;
-    for(int i = 0; i < len; i++) {
-        t[i] = f(list[i]);
-    }
-    return t;
-}
-
-int *MapCharToInt(int(*f)(char),char *list, int len) {
-    if(list == NULL) return NULL; 
-    int *t = calloc(len,sizeof(int));
-    if(t == NULL) return NULL;
-    for(int i = 0; i < len; i++) {
-        t[i] = f(list[i]);
-    }
-    return t;
-}
-
-bool *MapCharToBool(bool(*f)(char),char *list, int len) {
-    if(list == NULL) return NULL; 
-    bool *t = calloc(len,sizeof(bool));
-    if(t == NULL) return NULL;
-    for(int i = 0; i < len; i++) {
-        t[i] = f(list[i]);
-    }
-    return t;
-}
-
-// => Fiter
-res *filterInt(bool(*f)(int),int *list,int len) {
-    if(list == NULL) return NULL; 
-    res *r = calloc(1,sizeof(res));
-    int *tmp = calloc(len,sizeof(int));
-    if(tmp == NULL) return NULL;
-    int tmpIdx = 0;
-    for(int i = 0; i < len; i++) {
-        if(f(list[i]) == true) {
-            tmp[tmpIdx++] = list[i];
-        }
-    }
-    int *p = calloc(tmpIdx,sizeof(int));
-    if(p == NULL) return NULL;
-    memcpy(p,tmp,tmpIdx*sizeof(int));
-    free(tmp);
-    r ->len = tmpIdx;
-    r ->res = (void*) p;
-    return r;
-}
-
-res *filterChar(bool(*f)(char),char *list,int len) {
-    if(list == NULL) return NULL; 
-    res *r = calloc(1,sizeof(res));
-    char *tmp = calloc(len,sizeof(char));
-    if(tmp == NULL) return NULL;
-    int tmpIdx = 0;
-    for(int i = 0; i < len; i++) {
-        if(f(list[i]) == true) {
-            tmp[tmpIdx++] = list[i];
-        }
-    }
-    char *p = calloc(tmpIdx,sizeof(char));
-    if(p == NULL) return NULL;
-    memcpy(p,tmp,tmpIdx*sizeof(char));
-    free(tmp);
-    r ->len = tmpIdx;
-    r ->res = (void*) p;
-    return r;
-}
-
-// => Take
-int *takeInt(int amount, int *list, int len) {
-    if(list == NULL) return NULL; 
-    if(amount > len) return NULL;
-    int *p = calloc(amount,sizeof(int));
-    if(p == NULL) return NULL;
-    for(int i = 0; i < amount; i++) {
-        p[i] = list[i];
-    }
-    return p;
-}
-
-char *takeChar(int amount, char *list, int len) {
-    if(list == NULL) return NULL; 
-    if(amount > len) return NULL;
-    char *p = calloc(amount,sizeof(char));
-    if(p == NULL) return NULL;
-    for(int i = 0; i < amount; i++) {
-        p[i] = list[i];
-    }
-    return p;
-}
-
-res *takeIntWhile(bool(*f)(int),int *list, int len) { 
-    if(list == NULL) return NULL; 
-    int *tmp = calloc(len,sizeof(int));
-    if(tmp == NULL) return NULL;
-    int i = 0;
-    for(; i <= len; i++) {
-        if(f(list[i]) == true) {
-            
-            tmp[i] = list[i];
-            continue;
-        }
-        break;  
-    }
-    int *r = calloc(i,sizeof(int));
-    memcpy(r,tmp,i*sizeof(int));
-    free(tmp);
-    res *re = calloc(1,sizeof(res));
-    re ->res = (void*) r;
-    re ->len = i;
-    return re;
-}
-
-res *takeCharWhile(bool(*f)(char),char *list, int len) { 
-    if(list == NULL) return NULL; 
-    char *tmp = calloc(len,sizeof(char));
-    if(tmp == NULL) return NULL;
-    int i = 0;
-    for(; i <= len; i++) {
-        if(f(list[i]) == true) {
-            
-            tmp[i] = list[i];
-            continue;
-        }
-        break;  
-    }
-    char *r = calloc(i,sizeof(char));
-    memcpy(r,tmp,i*sizeof(char));
-    free(tmp);
-    res *re = calloc(1,sizeof(res));
-    re ->res = (void*) r;
-    re ->len = i;
-    return re;
-}
-
-
-// => Drop
-int *dropInt(int amount, int *list, int len) {
-    if(list == NULL) return NULL; 
-    if(amount > len) return NULL;
-    for(int i = 0; i < amount; i++) {
-        *list++;
-    }
-    return list;
-}
-
-char *dropChar(int amount, char *list, int len) {
-    if(list == NULL) return NULL; 
-    if(amount > len) return NULL;
-    for(int i = 0; i < amount; i++) {
-        *list++;
-    }
-    return list;
-}
-
-
-res *dropIntWhile(bool(*f)(int),int *list, int len) {
-    if(list == NULL) return NULL; 
-    int nl = 0;
-    for(int i = 0; i < len; i++) {
-        if(f(*list) == false) {
-            break;
-        }
-        *list++;
-        nl++;
-    }
-    res *re =  calloc(1,sizeof(res));
-    re ->len = nl;
-    re ->res = list;
-}
-
-res *dropCharWhile(bool(*f)(char),char *list, int len) {
-    if(list == NULL) return NULL; 
-    int nl = 0;
-    for(int i = 0; i < len; i++) {
-        if(f(*list) == false) {
-            break;
-        }
-        *list++;
-        nl++;
-    }
-    res *re =  calloc(1,sizeof(res));
-    re ->len = nl;
-    re ->res = list;
-}
-
-// => Gen
-int *intGen(int start, int stop) {
-    int *p = NULL;
-    int index = 0;
-    if(stop < start) {
-        p = calloc((start-stop)+1,sizeof(int));
-        if (p == NULL) return NULL;
-        for( ; start >= stop ;) {
-            p[index++] = start--;
-        }
-    }
-    p = calloc((stop-start)+1,sizeof(int));
-    if (p == NULL) return NULL;
-    for( ; start <= stop ; ) {
-        p[index++] = start++;
-    }
-    return p;
-    
-}
-
-char *strGen(char start, char stop) {
-    char *p = NULL;
-    int index = 0;
-    if(stop < start) {
-        p = calloc((start-stop)+1,sizeof(char));
-        if (p == NULL) return NULL;
-        for( ; start >= stop ;) {
-            p[index++] = start--;
-        }
-    }
-    p = calloc((stop-start)+1,sizeof(char));
-    if (p == NULL) return NULL;
-    for( ; start <= stop ; ) {
-        p[index++] = start++;
-    }
-    return p;
-}
-
-
-// => find
-maybe *findInt(int value, int *list, int len) {
-    if(list == NULL) return NULL; 
-    maybe *m = calloc(1,sizeof(maybe));
-    for(int i = 0; i < len; i++) {
-        if(*list == value) {
-            m ->value = (void*) list;
-            return m;
-        }
-        *list++;
-    }
-    m ->value = NOTHING;
-    return m;
-}
-
-maybe *findChar(char value, char *list, int len) {
-    if(list == NULL) return NULL; 
-    maybe *m = calloc(1,sizeof(maybe));
-    for(int i = 0; i < len; i++) {
-        if(*list == value) {
-            m ->value = (void*) list;
-            return m;
-        }
-        *list++;
-    }
-    m ->value = NOTHING;
-    return m;
-}
-
-
+#define find(val,list,length,type,maybe_struct) \
+    type *p = calloc(1,sizeof(maybe));\
+    if(list != NULL) { \
+        if(p != NULL) { \
+            for(int i = 0; i < length; i++) { \
+                if(*list == val) { \
+                    p -> value = (void*) list; \
+                    break; \
+                } \
+                *list++; \
+            } \
+            p -> value = NOTHING; \
+        }else{p -> value = NOTHING; } \
+    }else{p -> value = NOTHING; } \
+    maybe_struct = p;
 
 #endif
