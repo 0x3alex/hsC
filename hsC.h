@@ -60,7 +60,7 @@ typedef struct {
         * res should be a pointer
 */
 #define filter(func,list,length,type,res_struct) \
-    res *r = calloc(1,sizeof(res)); \
+    res *a = calloc(1,sizeof(res)); \
     type *tmp = calloc(length,sizeof(type));\
     if(tmp != NULL) { \
         int tidx = 0; \
@@ -73,18 +73,18 @@ typedef struct {
         if(p != NULL) { \
             memcpy(p,tmp,tidx*sizeof(type)); \
             free(tmp); \
-            r -> len = tidx; \
-            r -> res = (void*) p; \
-            res_struct = r; \
+            a -> len = tidx; \
+            a -> res = (void*) p; \
+            res_struct = a; \
         }else{ \
-            r -> len = 0; \
-            r -> res = NULL;\
-            res_struct = r; \
+            a -> len = 0; \
+            a -> res = NULL;\
+            res_struct = a; \
         } \
     }else{ \
-        r -> len = 0; \
-        r -> res = NULL; \
-        res_struct = r; \
+        a -> len = 0; \
+        a -> res = NULL; \
+        res_struct = a; \
     } 
 
 /* 
@@ -128,10 +128,10 @@ typedef struct {
         type *p = calloc(idx,sizeof(type)); \
         memcpy(p,tmp,idx*sizeof(type)); \
         free(tmp); \
-        res *r = calloc(1,sizeof(res)); \
-        r -> len = idx; \
-        r -> res = (void*) p; \
-        res_struct = r; \
+        res *a = calloc(1,sizeof(res)); \
+        a -> len = idx; \
+        a -> res = (void*) p; \
+        res_struct = a; \
     }
 
 /* 
@@ -167,10 +167,10 @@ typedef struct {
             idx++; \
             *list++;\
         }\
-        res *r = calloc(1,sizeof(res)); \
-        r -> len = idx; \
-        r -> res = list;\
-        res_struct = r; \
+        res *a = calloc(1,sizeof(res)); \
+        a -> len = idx; \
+        a -> res = list;\
+        res_struct = a; \
     } else{res_struct = NULL;}
 
 
@@ -220,17 +220,19 @@ typedef struct {
     [ ! ] - If value is found, value in maybe_struct is the value. If not, value in maybe_struct is NOTHING
 */
 #define find(val,list,length,type,maybe_struct) \
-    type *p = calloc(1,sizeof(maybe));\
+    maybe *p = calloc(1,sizeof(maybe));\
     if(list != NULL) { \
         if(p != NULL) { \
+            int f = 0; \
             for(int i = 0; i < length; i++) { \
                 if(*list == val) { \
+                    f = 1; \
                     p -> value = (void*) list; \
                     break; \
                 } \
                 *list++; \
             } \
-            p -> value = NOTHING; \
+            if(f == 0) p -> value = NOTHING; \
         }else{p -> value = NOTHING; } \
     }else{p -> value = NOTHING; } \
     maybe_struct = p;
