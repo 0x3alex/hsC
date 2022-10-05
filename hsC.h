@@ -234,4 +234,29 @@ typedef struct {
     }else{p -> value = NOTHING; } \
     maybe_struct = p;
 
+/*
+    * list is the list that is going to be chain-mapped over
+    * list_length is the length of the list
+    * funcs is the list of funcs, must have the same type as list, type and out
+        *(input type should be output type and input type should be the same as type, out and list)
+    * funcs_length is the length of the functions list
+    * type is the type
+    * out is the output    
+    * [x] -> [x -> x] -> [x]    
+*/
+#define chain(list,list_length,funcs,funcs_length,type,out) \
+    if(list != NULL) { \
+        type *p = calloc(list_length,sizeof(type)); \
+        if(p != NULL) { \
+            map(funcs[0],list,list_length,type,p); \
+            for(int i = 1; i < funcs_length; i++) { \
+                for(int j = 0; j < list_length; j++) { \
+                    p[j] = funcs[i](p[j]); \
+                } \
+            } \
+            out = p; \
+        }else{out = NULL;} \
+    }else{out = NULL;}
+
+
 #endif
