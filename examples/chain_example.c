@@ -2,7 +2,6 @@
 
 #include "../hsC.h"
 #include <stdio.h>
-#include <ctype.h>
 
 int f1(int a) {
     return a+2;
@@ -27,6 +26,8 @@ int main(void) {
     for(int i = 0; i < 5; i++) {
         printf("%d\n",m[i]);
     }
+
+    
 
     return 0;
 }
