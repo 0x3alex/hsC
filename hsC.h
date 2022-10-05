@@ -186,12 +186,10 @@ typedef struct {
         type start = sta; \
         type stop = sto; \
         int i = 0; \
-        p = calloc((start-stop)+1,sizeof(type)); \
+        p = calloc((start/step),sizeof(type)); \
         if(p != NULL) { \
             while(start >= stop) { \
-                if(start % step == 0) { \
-                    p[i++] = start--;\
-                }else{start--;} \
+                p[i++] = start-step;\
             }\
             out = p;\
         }else{out = NULL;} \
@@ -200,12 +198,11 @@ typedef struct {
         type start = sta; \
         type stop = sto; \
         int i = 0; \
-        p = calloc((stop-start)+1,sizeof(type));\
+        p = calloc((stop / step),sizeof(type));\
         if(p != NULL) {\
             while(start <= stop) {\
-                if(start % step == 0) { \
-                    p[i++] = start++;\
-                }else{start++;} \
+                p[i++] = start;\
+                start += step; \
             }\
         }else{out = NULL;}\
         out = p; \
