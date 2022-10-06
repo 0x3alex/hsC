@@ -284,6 +284,11 @@ typedef struct {
 
 /*
     * Only for Strings!
+    * value is the value to check for
+    * value_length is the length of the value
+    * list is the list to search in
+    * list_length is the length of the list
+    * out is output (bool)
  */
 #define isInfixOf(value,value_length,list,list_length,out) \
     for(int i = 0; i < list_length; i++) { \
