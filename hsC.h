@@ -291,7 +291,7 @@ void *snd(tuple *t) {
             out = p; \
         }else{out = NULL;} \
     }else{out = NULL;}
-    
+
 /*
     *val is the value to be checked for
     *list is the list to be checked in
@@ -319,6 +319,7 @@ void *snd(tuple *t) {
 
 
 /*
+    Something like *find* just for stings. Returns instead of "nothing" and the res, true and false
     * value is the value to check for
     * value_length is the length of the value
     * list is the list to search in
