@@ -285,13 +285,13 @@ typedef struct {
 /*
     * Only for Strings!
  */
-#define isInfixOf(value,value_length,type,list,list_length,out) \
+#define isInfixOf(value,value_length,list,list_length,out) \
     for(int i = 0; i < list_length; i++) { \
         if(i+value_length > list_length) { \
             out = false; \
             break; \
         } \
-        type tmp = calloc(value_length,sizeof(type)); \
+        char *tmp = calloc(value_length,sizeof(char)); \
         for(int j = 0; j <= value_length;  j++) { \
             tmp[j] = list[i+j]; \
         } \
