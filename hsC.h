@@ -257,6 +257,47 @@ typedef struct {
             out = p; \
         }else{out = NULL;} \
     }else{out = NULL;}
+/*
+    *val is the value to be checked for
+    *list is the list to be checked in
+    *isString has to be true if list is type char* or greater
+    *length is the length of the list
+    *out is the output, which is a bool
+*/
+#define elem(val,list,isString,length,out) \
+    if (list != NULL) { \
+        for(int i = 0; i < length; i++) { \
+            if(isString) { \
+                if(strcmp(val,list[i]) == 0) { \
+                    out = true; \
+                } \
+            }else{ \
+                if(val == list[i]) { \
+                    out = true; \
+                } \
+            } \
+        } \
+        if(!out) { \
+            out = false; \
+        } \
+    }else{ out = false; } \
 
-
+/*
+    * Only for Strings!
+ */
+#define isInfixOf(value,value_length,type,list,list_length,out) \
+    for(int i = 0; i < list_length; i++) { \
+        if(i+value_length > list_length) { \
+            out = false; \
+            break; \
+        } \
+        type tmp = calloc(value_length,sizeof(type)); \
+        for(int j = 0; j <= value_length;  j++) { \
+            tmp[j] = list[i+j]; \
+        } \
+        if(strncmp(value,tmp,value_length) == 0) { \
+            out = true; \
+            break; \
+        } \
+    } 
 #endif
