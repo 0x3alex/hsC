@@ -227,6 +227,7 @@ void *snd(tuple *t) {
     }
 
 /*
+    [ !! ] - For Strings use 'isInfixOf'
     * Val is the value to seach for
     * list is the list to search in
     * length is the length of the list
@@ -235,8 +236,8 @@ void *snd(tuple *t) {
     [ ! ] - If value is found, value in maybe_struct is the value. If not, value in maybe_struct is NOTHING
 */
 #define find(val,list,length,type,maybe_struct) \
-    maybe *p = calloc(1,sizeof(maybe));\
     if(list != NULL) { \
+        maybe *p = calloc(1,sizeof(maybe));\
         if(p != NULL) { \
             int f = 0; \
             for(int i = 0; i < length; i++) { \
@@ -248,9 +249,24 @@ void *snd(tuple *t) {
                 *list++; \
             } \
             if(f == 0) p -> value = NOTHING; \
-        }else{p -> value = NOTHING; } \
-    }else{p -> value = NOTHING; } \
-    maybe_struct = p;
+            maybe_struct = p; \
+        }else{maybe_struct = NOTHING; } \
+    }else{maybe_struct = NOTHING; } \
+    
+
+/*
+    *maybe struct is the maybe struct
+    *nothing_val is the value that should be used for NOTHING
+    *type should be the type of nothing_val and out (both must have the same type)
+    *out is the output
+    [ ! ] - Return NOT an pointer, it returns the value itself
+*/
+#define fromMaybe(maybe_struct,nothing_val,type,out) \
+    if(maybe_struct->value == NOTHING) { \
+        out = nothing_val; \
+    }else{ \
+        out = ((type*)maybe_struct -> value)[0]; \
+    }
 
 /*
     * list is the list that is going to be chain-mapped over
@@ -275,6 +291,7 @@ void *snd(tuple *t) {
             out = p; \
         }else{out = NULL;} \
     }else{out = NULL;}
+    
 /*
     *val is the value to be checked for
     *list is the list to be checked in
