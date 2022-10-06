@@ -4,28 +4,46 @@
 #include <stdlib.h>
 #include <string.h>
 #define NOTHING 0x0
-
-// => Structs
-    /*
-        * Struct is used for functions that return a new pointer
-        * user can get result list and length, since calulcating length of an pointer
-        * is not possible
-    */
+/*
+    * Struct is used for functions that return a new pointer
+    * user can get result list and length, since calulcating length of an pointer
+    * is not possible
+*/
 typedef struct {
     void *res;
     int len;
 } res;
 
-    /*
-        * Struct is used for functions that return either the value or nothing
-        * not really needed, since it could be done by an void pointer
-        * but its better for processing the values afterwards and clearness   
-    */
-typedef void* MaybeValue;
+/*
+    * Struct is used for functions that return either the value or nothing
+    * not really needed, since it could be done by an void pointer
+    * but its better for processing the values afterwards and clearness   
+*/
 typedef struct {
-    MaybeValue value;
+    void* value;
 } maybe;
 
+/*
+    *Simple struct to use tuples in c
+*/
+typedef struct {
+    void *val1;
+    void *val2;
+} tuple;
+
+/*
+    *get first element of the tuple
+*/
+void *fst(tuple *t) {
+    return t->val1;
+}
+
+/*
+    *get second element of the tuple
+*/
+void *snd(tuple *t) {
+    return t->val2;
+}
 
 /*
     * Func is the function that is going to be mapped, it does not need to be passed int with a &
@@ -282,27 +300,29 @@ typedef struct {
         } \
     }else{ out = false; } \
 
+
 /*
-    * Only for Strings!
     * value is the value to check for
     * value_length is the length of the value
     * list is the list to search in
     * list_length is the length of the list
-    * out is output (bool)
  */
-#define isInfixOf(value,value_length,list,list_length,out) \
-    for(int i = 0; i < list_length; i++) { \
-        if(i+value_length > list_length) { \
-            out = false; \
-            break; \
-        } \
-        char *tmp = calloc(value_length,sizeof(char)); \
-        for(int j = 0; j <= value_length;  j++) { \
-            tmp[j] = list[i+j]; \
-        } \
-        if(strncmp(value,tmp,value_length) == 0) { \
-            out = true; \
-            break; \
-        } \
-    } 
+
+bool isInfixOf(char *value, int value_length,char *list, int list_length) {
+    if(list == NULL) return false;
+    for(int i = 0; i < list_length; i++) {
+        if(i+value_length > list_length) {
+            return false;
+        }
+        char *tmp = calloc(value_length,sizeof(char));
+        for(int j = 0; j <= value_length; j++) {
+            tmp[j] = list[i+j];
+        }
+        if(strncmp(value,tmp,value_length) == 0) {
+            free(tmp);
+            return true;
+        }
+        free(tmp);
+    }
+}
 #endif
