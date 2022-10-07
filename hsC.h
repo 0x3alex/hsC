@@ -1,6 +1,7 @@
 #ifndef hsC_H
 #define hsC_H
 #include <stdbool.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #define NOTHING 0x0
@@ -56,12 +57,11 @@ void *snd(tuple *t) {
 */
 #define map(func,list,length,typ,out)  \
     if(list != NULL) {\
-        typ *t = calloc(length,sizeof(typ)); \
-        if(t != NULL) { \
+        out = calloc(length,sizeof(typ)); \
+        if(out != NULL) { \
             for(int i = 0; i < length; i++) { \
-                t[i] = func(list[i]); \
+                out[i] = func(list[i]); \
             } \
-            out = t; \
         }else{out = NULL;} \
     }else{out = NULL;}
 
@@ -115,12 +115,11 @@ void *snd(tuple *t) {
 */
 #define take(amount, list, length, type, out) \
     if(list != NULL && amount <= length) { \
-        type *p = calloc(amount,sizeof(type)); \
-        if(p != NULL) { \
+        out = calloc(amount,sizeof(type)); \
+        if(out != NULL) { \
             for(int i = 0; i < amount; i++) { \
-                p[i] = list[i]; \
+                out[i] = list[i]; \
             } \
-            out = p; \
         } else { out = NULL ;} \
     } else { out = NULL; }
 
@@ -200,30 +199,26 @@ void *snd(tuple *t) {
 */
 #define gen(sta,sto,type,step,out) \
     if(sto < sta) { \
-        type *p = NULL; \
         type start = sta; \
         type stop = sto; \
         int i = 0; \
-        p = calloc((start/step),sizeof(type)); \
-        if(p != NULL) { \
+        out = calloc((start/step),sizeof(type)); \
+        if(out != NULL) { \
             while(start >= stop) { \
-                p[i++] = start-step;\
+                out[i++] = start-step;\
             }\
-            out = p;\
         }else{out = NULL;} \
     }else{ \
-        type *p = NULL; \
         type start = sta; \
         type stop = sto; \
         int i = 0; \
-        p = calloc((stop / step),sizeof(type));\
-        if(p != NULL) {\
+        out = calloc((stop / step),sizeof(type));\
+        if(out != NULL) {\
             while(start <= stop) {\
-                p[i++] = start;\
+                out[i++] = start;\
                 start += step; \
             }\
         }else{out = NULL;}\
-        out = p; \
     }
 
 /*
@@ -280,15 +275,14 @@ void *snd(tuple *t) {
 */
 #define chain(list,list_length,funcs,funcs_length,type,out) \
     if(list != NULL) { \
-        type *p = calloc(list_length,sizeof(type)); \
-        if(p != NULL) { \
-            map(funcs[0],list,list_length,type,p); \
+        out = calloc(list_length,sizeof(type)); \
+        if(out != NULL) { \
+            map(funcs[0],list,list_length,type,out); \
             for(int i = 1; i < funcs_length; i++) { \
                 for(int j = 0; j < list_length; j++) { \
-                    p[j] = funcs[i](p[j]); \
+                    out[j] = funcs[i](out[j]); \
                 } \
             } \
-            out = p; \
         }else{out = NULL;} \
     }else{out = NULL;}
 
@@ -317,6 +311,15 @@ void *snd(tuple *t) {
         } \
     }else{ out = false; } \
 
+#define reverse(list,list_length,type,out) \
+    if(list != NULL) { \
+        out = calloc(list_length,sizeof(type)); \
+        int ridx = 0; \
+        for(int i = list_length-1; i >= 0 ; i--) { \
+            out[ridx++] = list[i]; \
+        } \
+    }else{out = NULL;}
+     
 
 /*
     Something like *find* just for stings. Returns instead of "nothing" and the res, true and false
@@ -332,7 +335,7 @@ bool isInfixOf(char *value, int value_length,char *list, int list_length) {
         if(i+value_length > list_length) {
             return false;
         }
-        char *tmp = calloc(value_length,sizeof(char));
+        char *tmp = (char*)calloc(value_length,sizeof(char));
         for(int j = 0; j <= value_length; j++) {
             tmp[j] = list[i+j];
         }
@@ -343,4 +346,10 @@ bool isInfixOf(char *value, int value_length,char *list, int list_length) {
         free(tmp);
     }
 }
+
+char digitToInt(int a) {
+    return a + '0';
+}
+
+
 #endif
