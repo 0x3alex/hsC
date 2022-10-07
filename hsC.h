@@ -311,6 +311,13 @@ void *snd(tuple *t) {
         } \
     }else{ out = false; } \
 
+
+/*
+    *list is the list to reverse
+    *list_length is the length of the list
+    *type is the type of the list
+    *out is the output and needs to be the same type as type
+*/
 #define reverse(list,list_length,type,out) \
     if(list != NULL) { \
         out = calloc(list_length,sizeof(type)); \
