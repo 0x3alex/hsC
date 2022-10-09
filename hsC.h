@@ -354,11 +354,10 @@ bool isInfixOf(char *value, int value_length,char *list, int list_length) {
     }
 }
 
+
 char digitToInt(int a) {
     return a + '0';
 }
-
-
 
 int occurrencesInString(char *string, char c) {
     int r = 0;
@@ -398,9 +397,13 @@ res *splitAt(char *list,int list_length,bool(*f)(char),char splitter) {
             * Drop Until Space is reached and set list to new list 
         */
         dropWhile(f,list,list_length,char*,r);
+        /*
+            * recalculate
+        */
         so--;
         list = (char*)r->res;
         *list++;
+        free(r);
         
     }
     /*

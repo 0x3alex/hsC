@@ -22,4 +22,8 @@ Includes
 
 ```splitAt``` - Splits a string with a given splitter
 
+```digitToInt``` - Returns a converted "char number" ('1',...) as actual int
+
+```occurrencesInString``` - Counts the occurrences of an given char in an string
+
 everything is written in generic macros!
