@@ -327,7 +327,7 @@ void *snd(tuple *t) {
         } \
     }else{out = NULL;}
      
-
+#ifdef HSC_STR
 /*
     Something like *find* just for stings. Returns instead of "nothing" and the res, true and false
     * value is the value to check for
@@ -354,8 +354,6 @@ bool isInfixOf(char *value, int value_length,char *list, int list_length) {
     }
 }
 
-
-#ifdef HSC_STR
 char digitToInt(int a) {
     return a + '0';
 }
