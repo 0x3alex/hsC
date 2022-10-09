@@ -26,4 +26,5 @@ Includes
 
 ```occurrencesInString``` - Counts the occurrences of an given char in an string
 
-everything is written in generic macros!
+Almost everything is written in macros!
+
