@@ -14,9 +14,13 @@ typedef struct {
     void *res;
     int len;
 } res;
+
+
+#ifdef HSC_TUPLE
 /*
     *Simple struct to use tuples in c
 */
+
 typedef struct {
     void *val1;
     void *val2;
@@ -35,6 +39,7 @@ void *fst(tuple *t) {
 void *snd(tuple *t) {
     return t->val2;
 }
+#endif
 
 /*
     * Func is the function that is going to be mapped, it does not need to be passed int with a &
