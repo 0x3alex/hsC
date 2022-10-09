@@ -20,4 +20,6 @@ Includes
 
 ```isInfixOf``` - Check if a string is an infix of an string
 
+```splitAt``` - Splits a string with a given splitter
+
 everything is written in generic macros!
