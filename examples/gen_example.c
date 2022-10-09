@@ -1,8 +1,5 @@
-#define hsC_C
-
 #include "../hsC.h"
 #include <stdio.h>
-#include <ctype.h>
 
 
 int main(void) {

@@ -355,6 +355,7 @@ bool isInfixOf(char *value, int value_length,char *list, int list_length) {
 }
 
 
+#ifdef HSC_STR
 char digitToInt(int a) {
     return a + '0';
 }
@@ -415,5 +416,5 @@ res *splitAt(char *list,int list_length,bool(*f)(char),char splitter) {
     return rr;
 }
 
-
+#endif
 #endif

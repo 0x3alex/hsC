@@ -1,4 +1,4 @@
-#define hsC_C
+#define HSC_STR
 
 #include "../hsC.h"
 #include <stdio.h>
