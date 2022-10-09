@@ -20,6 +20,6 @@ Includes
 
 ```isInfixOf``` - Check if a string is an infix of an string
 
-```words``` - Splits a string at each space and returns an char**
+```splitAt``` - Splits a string with a given splitter
 
 everything is written in generic macros!
