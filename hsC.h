@@ -351,5 +351,58 @@ char digitToInt(int a) {
     return a + '0';
 }
 
+bool isNotSpace(char a) {
+    return a != ' ';
+}
+
+int occurrencesInString(char *string, char c) {
+    int r = 0;
+    while(*string) {
+        if(*string++ == c) {
+            r++;
+        }
+    }
+    return r;
+}
+
+/*
+    *Takes an String and returns the string splitted at each ' ';
+*/
+res *words(char *list,int list_length) {
+    /*
+        * caluclate length of result list
+    */
+    int so = 1 + occurrencesInString(list,' ');
+    char **splitted = calloc(so,sizeof(char*));
+    int ridx = 0;
+    while(so > 0) {
+        /*
+            * Get String until Space
+        */
+        res *r = NULL;
+        takeWhile(isNotSpace,list,list_length,char,r);
+        /*
+            * copy over
+        */
+        splitted[ridx++] = (char*)(r->res);
+        free(r);
+        /*
+            * Drop Until Space is reached and set list to new list 
+        */
+        dropWhile(isNotSpace,list,list_length,char*,r);
+        so--;
+        list = (char*)r->res;
+        *list++;
+        
+    }
+    /*
+        *Put it into a res struct to provide the length of the char** list
+    */
+    res* rr = calloc(1,sizeof(res));
+    rr->len = ridx;
+    rr->res = (void*)splitted;
+    return rr;
+}
+
 
 #endif
