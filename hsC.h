@@ -14,16 +14,6 @@ typedef struct {
     void *res;
     int len;
 } res;
-
-/*
-    * Struct is used for functions that return either the value or nothing
-    * not really needed, since it could be done by an void pointer
-    * but its better for processing the values afterwards and clearness   
-*/
-typedef struct {
-    void* value;
-} maybe;
-
 /*
     *Simple struct to use tuples in c
 */
@@ -219,48 +209,6 @@ void *snd(tuple *t) {
                 start += step; \
             }\
         }else{out = NULL;}\
-    }
-
-/*
-    [ !! ] - For Strings use 'isInfixOf'
-    * Val is the value to seach for
-    * list is the list to search in
-    * length is the length of the list
-    * type is the type of the list
-    * maybe_struct is the res struct
-    [ ! ] - If value is found, value in maybe_struct is the value. If not, value in maybe_struct is NOTHING
-*/
-#define find(val,list,length,type,maybe_struct) \
-    if(list != NULL) { \
-        maybe *p = calloc(1,sizeof(maybe));\
-        if(p != NULL) { \
-            int f = 0; \
-            for(int i = 0; i < length; i++) { \
-                if(*list == val) { \
-                    f = 1; \
-                    p -> value = (void*) list; \
-                    break; \
-                } \
-                *list++; \
-            } \
-            if(f == 0) p -> value = NOTHING; \
-            maybe_struct = p; \
-        }else{maybe_struct = NOTHING; } \
-    }else{maybe_struct = NOTHING; } \
-    
-
-/*
-    *maybe struct is the maybe struct
-    *nothing_val is the value that should be used for NOTHING
-    *type should be the type of nothing_val and out (both must have the same type)
-    *out is the output
-    [ ! ] - Return NOT an pointer, it returns the value itself
-*/
-#define fromMaybe(maybe_struct,nothing_val,type,out) \
-    if(maybe_struct->value == NOTHING) { \
-        out = nothing_val; \
-    }else{ \
-        out = ((type*)maybe_struct -> value)[0]; \
     }
 
 /*
