@@ -358,9 +358,7 @@ char digitToInt(int a) {
     return a + '0';
 }
 
-bool isNotSpace(char a) {
-    return a != ' ';
-}
+
 
 int occurrencesInString(char *string, char c) {
     int r = 0;
@@ -373,13 +371,16 @@ int occurrencesInString(char *string, char c) {
 }
 
 /*
-    *Takes an String and returns the string splitted at each ' ';
+    *list is the string to split
+    *list_lenght is the length of the string
+    *f is a function that returns true or falese the given char is the splitter
+    *splitter is the splitter to split at
 */
-res *words(char *list,int list_length) {
+res *splitAt(char *list,int list_length,bool(*f)(char),char splitter) {
     /*
         * caluclate length of result list
     */
-    int so = 1 + occurrencesInString(list,' ');
+    int so = 1 + occurrencesInString(list,splitter);
     char **splitted = calloc(so,sizeof(char*));
     int ridx = 0;
     while(so > 0) {
@@ -387,7 +388,7 @@ res *words(char *list,int list_length) {
             * Get String until Space
         */
         res *r = NULL;
-        takeWhile(isNotSpace,list,list_length,char,r);
+        takeWhile(f,list,list_length,char,r);
         /*
             * copy over
         */
@@ -396,7 +397,7 @@ res *words(char *list,int list_length) {
         /*
             * Drop Until Space is reached and set list to new list 
         */
-        dropWhile(isNotSpace,list,list_length,char*,r);
+        dropWhile(f,list,list_length,char*,r);
         so--;
         list = (char*)r->res;
         *list++;
