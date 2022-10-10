@@ -282,7 +282,6 @@ void *snd(tuple *t) {
      
 #ifdef HSC_STR
 /*
-    Something like *find* just for stings. Returns instead of "nothing" and the res, true and false
     * value is the value to check for
     * value_length is the length of the value
     * list is the list to search in
