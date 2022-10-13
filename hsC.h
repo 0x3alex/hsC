@@ -72,8 +72,8 @@ void *snd(tuple *t) {
     * res is an res struct (defined above) initialized to null
         * res should be a pointer
 */
-#define filter(func,list,length,type,res_struct) \
-    res *a = calloc(1,sizeof(res)); \
+#define filter(func,list,length,type,res_struct) { \
+    res_struct = calloc(1,sizeof(res)); \
     type *tmp = calloc(length,sizeof(type));\
     if(tmp != NULL) { \
         int tidx = 0; \
@@ -82,23 +82,21 @@ void *snd(tuple *t) {
                 tmp[tidx++] = list[i];\
             } \
         } \
-        int *p = calloc(tidx,sizeof(type)); \
+        type *p = calloc(tidx,sizeof(type)); \
         if(p != NULL) { \
             memcpy(p,tmp,tidx*sizeof(type)); \
             free(tmp); \
-            a -> len = tidx; \
-            a -> res = (void*) p; \
-            res_struct = a; \
+            res_struct -> len = tidx; \
+            res_struct -> res = (void*) p; \
         }else{ \
-            a -> len = 0; \
-            a -> res = NULL;\
-            res_struct = a; \
+            res_struct -> len = 0; \
+            res_struct -> res = NULL;\
         } \
     }else{ \
-        a -> len = 0; \
-        a -> res = NULL; \
-        res_struct = a; \
-    } 
+        res_struct -> len = 0; \
+        res_struct -> res = NULL; \
+    } \
+}
 
 /* 
     * Amount is the amount to be taken from the list
@@ -179,10 +177,9 @@ void *snd(tuple *t) {
             idx++; \
             *list++;\
         }\
-        res *a = calloc(1,sizeof(res)); \
-        a -> len = idx; \
-        a -> res = list;\
-        res_struct = a; \
+        res_struct = calloc(1,sizeof(res)); \
+        res_struct -> len = idx; \
+        res_struct -> res = list;\
     } else{res_struct = NULL;}
 
 
